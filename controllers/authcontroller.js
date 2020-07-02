@@ -27,13 +27,14 @@ router.post('/register', async (req, res) => {
 
         const user = await User.create(req.body);
         
-        user.senha = undefined;
+        user.password = undefined;
 
         return res.send({
             user,
         });
 
     } catch(err){
+        console.log(err);
         return res.status(400).send({ error: 'Registration failed'});
     }
 });
@@ -41,18 +42,18 @@ router.post('/register', async (req, res) => {
 //autenticação das credências cadstradas para acesso ao site
 router.post('/authenticate', async (req, res) => {
 
-    const{ email, senha} = req.body;
+    const{ email, password} = req.body;
 
-    const user = await User.findOne({ email }).select('+senha');
+    const user = await User.findOne({ email }).select('+password');
 
     //validações de senha/usuário
     if(!user)
         return res.status(400).send({error: "Usuário não localizado"});
 
-    if(!await bcrypt.compare(senha, user.senha))
+    if(!await bcrypt.compare(password, user.password))
         return res.status(400).send({error: 'Senha inválida'});
 
-    user.senha = undefined;
+    user.password = undefined;
 
     //validação do token utilizando o id do usuário(geração pelo banco)
     //e o secret do auth.json e expira em 1 dia(86400s)
