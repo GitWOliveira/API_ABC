@@ -30,7 +30,7 @@ router.post('/register', async (req, res) => {
         user.password = undefined;
 
         return res.send({
-            user,
+            user
         });
 
     } catch(err){
